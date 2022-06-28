@@ -13,7 +13,9 @@ You will need at least a C++ compiler that supports the C++11 standard. Default 
 
 `./INSTALL.sh` 
 
-`./Encoder input_file output_file`
+`./Encoder -I input_file -O output_file`
+
+Use `./Encoder -h` or `./Encoder --help` for more help information
 
 
 ## Format
