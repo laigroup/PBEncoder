@@ -1,7 +1,7 @@
 #include "encoder.hpp"
 
 void Encoder::addClause(vector<Int> &clause) {
-    util::printClause(clause);
+    // util::printClause(clause);
     clauses.push_back(clause);
     clauseCnt++;
 }
@@ -52,7 +52,7 @@ void WarnersEncoder::encodeConstraint(const vector<Int>& variable, const vector<
         coefficientBit++;
     }
 
-    cout << "maxCoefficient: " << maxCoefficient << "  coefficientBit: " << coefficientBit << std::endl;
+    // cout << "maxCoefficient: " << maxCoefficient << "  coefficientBit: " << coefficientBit << std::endl;
 
     vector<Int> auxVars = intervalEncode(variable, coefficient, left, right);
     limitEncode(limit, auxVars);
@@ -63,7 +63,7 @@ vector<Int> WarnersEncoder::intervalEncode(const vector<Int>& variable, const ve
     vector<Int> auxVars;
     vector<Int> tmpClause;
     if(left == right) { // leaf
-        cout << "In intervalEnode left-right : " << left << "-" << right << std::endl;
+        // cout << "In intervalEnode left-right : " << left << "-" << right << std::endl;
         Int xi = variable[left];
         Int ai = coefficient[left];
         auxVars.resize(coefficientBit);
@@ -84,9 +84,9 @@ vector<Int> WarnersEncoder::intervalEncode(const vector<Int>& variable, const ve
         Int mid = (left + right) >> 1;
         vector<Int> auxVarsL = intervalEncode(variable, coefficient, left, mid);
         vector<Int> auxVarsR = intervalEncode(variable, coefficient, mid + 1, right);
-        cout << "In intervalEnode left-right : " << left << "-" << right << std::endl;
+        // cout << "In intervalEnode left-right : " << left << "-" << right << std::endl;
         if(auxVarsL.size() != auxVarsR.size()) {
-            cout << "* different size between " << auxVarsL.size() << " " << auxVarsR.size() << std::endl;
+            // cout << "* different size between " << auxVarsL.size() << " " << auxVarsR.size() << std::endl;
             auxVarsR.push_back(getNewAuxVar());
             tmpClause.push_back(-auxVarsR[auxVarsR.size()-1]);          // ???? is this correct???
             addClause(tmpClause); tmpClause.clear();
