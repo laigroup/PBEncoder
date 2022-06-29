@@ -17,6 +17,7 @@ You will need at least a C++ compiler that supports the C++11 standard. Default 
 
 Use `./Encoder -h` or `./Encoder --help` for more help information
 
+Use `./Encoder --wf` option to choose weight format. (1-UNWEIGHTED, 2-WEIGHTED)
 
 ## Format
 
