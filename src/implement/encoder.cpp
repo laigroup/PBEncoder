@@ -16,13 +16,32 @@ void Encoder::printCnf(const string &filePath) const {
         util::showError(filePath + " can not open");
     }
 
-    outfile << "p cnf " << varCnt << " " << clauseCnt << "\n";
+    string problemType;
+
+    switch (weightFormat) {
+        case PBWeightFormat::UNWEIGHTED : problemType = "cnf"; break;
+        case PBWeightFormat::WEIGHTED   : problemType = "wcnf"; break; 
+    }
+    outfile << "p " << problemType << " " << varCnt << " " << clauseCnt << "\n";
+
     for(Int i = 0; i < clauseCnt; i++) {
         for(Int literal : clauses[i]) {
             outfile << literal << " ";
         }
         outfile << "0\n";
     }
+
+    if(weightFormat == PBWeightFormat::WEIGHTED) {
+        for(Int x = 1; x <= varCnt; x++) {
+            Float weight;
+            weight = literalWeights.find(x)!=literalWeights.end() ? literalWeights.at(x) : 1;
+            outfile << "w " << x << " " << weight << std::endl;
+
+            weight = literalWeights.find(-x)!=literalWeights.end() ? literalWeights.at(-x) : 1;
+            outfile << "w " << -x << " " << weight << std::endl;
+        }
+    }
+
     outfile.close();
 }
 
@@ -36,6 +55,9 @@ void Encoder::encodePbf(const Pbf &pbf) {
     for(Int i = 0; i < variables.size(); i++) {
         encodeConstraint(variables.at(i), coefficients.at(i), limits.at(i));
     }
+
+    weightFormat = pbf.getWeightFormat();
+    literalWeights = pbf.getLiteralWeights();
 }
 
 void WarnersEncoder::encodeConstraint(const vector<Int>& variable, const vector<Int> &coefficient, const Int &limit) {

@@ -68,6 +68,7 @@ extern const string& OPTIONAL_OPTION_GROUP;
 extern const string& HELP_OPTION;
 extern const string& INPUT_OPTION;
 extern const string& OUTPUT_OPTION;
+extern const string& WEIGHT_FORMAT_OPTION;
 
 enum class WeightFormat { UNWEIGHTED,
                           MINIC2D,
@@ -75,6 +76,11 @@ enum class WeightFormat { UNWEIGHTED,
                           MCC };
 extern const std::map<Int, WeightFormat> WEIGHT_FORMAT_CHOICES;
 extern const Int DEFAULT_WEIGHT_FORMAT_CHOICE;
+
+enum class PBWeightFormat { UNWEIGHTED,
+                            WEIGHTED };
+extern const std::map<Int, PBWeightFormat> PBWEIGHT_FORMAT_CHOICES;
+extern const Int DEFAULT_PBWEIGHT_FORMAT_CHOICE;
 
 extern const Float DEFAULT_JT_WAIT_SECONDS;
 

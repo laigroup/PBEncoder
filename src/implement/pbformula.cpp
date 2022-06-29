@@ -2,9 +2,11 @@
 
 /* inclusions *****************************************************************/
 
-#include "../interface/pbformula.hpp"
+#include "pbformula.hpp"
 
 /* constants ******************************************************************/
+
+const string &WEIGHT_WORD = "w";
 
 /* classes ********************************************************************/
 
@@ -44,6 +46,14 @@ Int Pbf::getDeclaredVarCount() const {
     return declaredVarCount;
 }
 
+Map<Int, Float> Pbf::getLiteralWeights() const {
+    return literalWeights; 
+}
+
+PBWeightFormat Pbf::getWeightFormat() const {
+    return weightFormat;
+}
+
 Int Pbf::getEmptyConstraintIndex() const {
     for (Int clauseIndex = 0; clauseIndex < variables.size(); clauseIndex++) {
         if (variables.at(clauseIndex).empty()) {
@@ -73,7 +83,7 @@ void Pbf::printConstraints() const {
     util::printPbf(variables, coefficients, limits);
 }
 
-Pbf::Pbf(const string& filePath) {
+Pbf::Pbf(const string& filePath, PBWeightFormat weightFormat) {
     util::printComment("Reading PBF formula...", 1);
 
     std::ifstream inputFileStream(filePath);  // variable will be destroyed if it goes out of scope
@@ -91,6 +101,7 @@ Pbf::Pbf(const string& filePath) {
     }
     Int declaredConstraintCount = DUMMY_MIN_INT;
     Int processedConstraintCount = 0;
+    this->weightFormat = weightFormat;
 
     Int lineIndex = 0;
 
@@ -116,6 +127,17 @@ Pbf::Pbf(const string& filePath) {
             if (declareV == COMMENT_VARIABLE_WORD) declaredVarCount = std::stoll(words.at(2));
             const string &declareC = words.at(3);
             if (declareC == COMMENT_CONSTRAINT_WORD) declaredConstraintCount = std::stoll(words.at(4));
+        } else if(startWord == WEIGHT_WORD) { // weight line
+            if(weightFormat == PBWeightFormat::UNWEIGHTED) util::showError("Wrong weighted option");
+            if(wordCount == 3) {
+                string var = words.at(1);                 // now i = i+1
+                if (var.at(0) != VARIABLE_WORD) util::showError("Wrong Variable format");
+                Int literal = std::stoll(var.substr(1));
+                Float weight = std::stod(words.at(2));
+                literalWeights[literal] = weight;
+            } else {
+                util::showWarning("Wrong weight format");
+            }
         } else {  // clause line
             vector<Int> clause;
             vector<Int> coefficient;
@@ -157,6 +179,13 @@ Pbf::Pbf(const string& filePath) {
                     coefficient.push_back(coef);
                 }
             }
+        }
+    }
+
+    if (weightFormat == PBWeightFormat::UNWEIGHTED) { // populates literalWeights with 1s
+        for (Int var = 1; var <= declaredVarCount; var++) {
+            literalWeights[var] = 1;
+            literalWeights[-var] = 1;
         }
     }
 

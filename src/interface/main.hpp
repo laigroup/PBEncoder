@@ -8,6 +8,7 @@ public:
 
     string input_file;
     string output_file;
+    PBWeightFormat weightFormat;
 
     cxxopts::Options *options;
 

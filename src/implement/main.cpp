@@ -7,8 +7,9 @@ void OptionDict::printHelp() const {
 
 void OptionDict::printOptions() const {
 	cout << "\t  -h, --help      	help information\t\tOptional\n";
-	cout << "\t  -" << INPUT_OPTION << " arg  \t\targ: input file path \t\tRequired\n";
-	cout << "\t  -" << OUTPUT_OPTION << " arg  \t\targ: output file path \t\tRequired\n";
+	cout << "\t  -" << INPUT_OPTION << "  arg  \t\targ: input file path \t\tRequired\n";
+	cout << "\t  -" << OUTPUT_OPTION << "  arg  \t\targ: output file path \t\tRequired\n";
+    cout << "\t --" << WEIGHT_FORMAT_OPTION << " arg \t\targ: weight format option [default: 1, and 1-UNWEIGHTED 2-WEIGHTED]\n";
 }
 
 void OptionDict::printWelcome() const {
@@ -35,6 +36,7 @@ OptionDict::OptionDict(int argc, char *argv[]) {
 
     options->add_options(OPTIONAL_OPTION_GROUP)
         (HELP_OPTION, "help")
+        (WEIGHT_FORMAT_OPTION, "", cxxopts::value<string>()->default_value(to_string(DEFAULT_PBWEIGHT_FORMAT_CHOICE)))
         ;
 
     cxxopts::ParseResult result = options->parse(argc, argv);
@@ -45,6 +47,7 @@ OptionDict::OptionDict(int argc, char *argv[]) {
 
     input_file = result[INPUT_OPTION].as<string>();
     output_file = result[OUTPUT_OPTION].as<string>();
+    weightFormat = PBWEIGHT_FORMAT_CHOICES.at(stoll(result[WEIGHT_FORMAT_OPTION].as<string>()));
 }
 
 int main(int argc, char **argv){
@@ -56,7 +59,7 @@ int main(int argc, char **argv){
     } else {
         util::printComment("Process ID of this main program:", 1);
         util::printComment("pid " + to_string(getpid()));
-        Pbf pbf(optionDict.input_file);
+        Pbf pbf(optionDict.input_file, optionDict.weightFormat);
         WarnersEncoder encoder;
 
         encoder.encodePbf(pbf);

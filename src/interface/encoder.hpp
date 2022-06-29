@@ -4,7 +4,8 @@ class Encoder {
 protected:
     vector<vector<Int> > clauses;
     Int varCnt, clauseCnt;
-    Int maxCoefficient, coefficientBit;
+    PBWeightFormat weightFormat;
+    Map<Int, Float> literalWeights;
 
     void addClause(vector<Int> &clause);
     virtual void encodeConstraint(const vector<Int>& variable, const vector<Int> &coefficient, const Int &limit) = 0;
@@ -19,9 +20,11 @@ public:
 
 class WarnersEncoder : public Encoder {
 protected:
+    Int maxCoefficient, coefficientBit;
     void encodeConstraint(const vector<Int>& variable, const vector<Int> &coefficient, const Int &limit);
     vector<Int> intervalEncode(const vector<Int>& variable, const vector<Int> &coefficient, Int left, Int right);
     void limitEncode(Int limit, vector<Int>& auxVar);
+    void weightEncode();
 
 public:
     WarnersEncoder(){};

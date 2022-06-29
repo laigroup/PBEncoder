@@ -1,6 +1,6 @@
 /* inclusions *****************************************************************/
 
-#include "../interface/util.hpp"
+#include "util.hpp"
 
 /* global variables ***********************************************************/
 
@@ -32,6 +32,7 @@ const string& OPTIONAL_OPTION_GROUP = "Optional";
 const string& HELP_OPTION = "h, help";
 const string& INPUT_OPTION = "I";
 const string& OUTPUT_OPTION = "O";
+const string& WEIGHT_FORMAT_OPTION = "wf";
 
 const std::map<Int, WeightFormat> WEIGHT_FORMAT_CHOICES = {
     {1, WeightFormat::UNWEIGHTED},
@@ -40,6 +41,11 @@ const std::map<Int, WeightFormat> WEIGHT_FORMAT_CHOICES = {
     {4, WeightFormat::MCC}      // weight line's trailing '0' is optional
 };
 const Int DEFAULT_WEIGHT_FORMAT_CHOICE = 4;
+
+const std::map<Int, PBWeightFormat> PBWEIGHT_FORMAT_CHOICES = {
+    {1, PBWeightFormat::UNWEIGHTED},
+    {2, PBWeightFormat::WEIGHTED}};
+const Int DEFAULT_PBWEIGHT_FORMAT_CHOICE = 1;
 
 const Float DEFAULT_JT_WAIT_SECONDS = 10.0;
 
