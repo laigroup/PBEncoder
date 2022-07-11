@@ -194,7 +194,7 @@ vector<Int> WarnersEncoder::intervalEncode(const vector<Int>& variable, const ve
             tmpClause.push_back(carryVar[i]); tmpClause.push_back(-auxVarsR[i]); tmpClause.push_back(-carryVar[i-1]);
             addClause(tmpClause); tmpClause.clear();
 
-            tmpClause.push_back(-carryVar[i]); tmpClause.push_back(auxVarsL[i]); tmpClause.push_back(auxVarsR[i-1]);
+            tmpClause.push_back(-carryVar[i]); tmpClause.push_back(auxVarsL[i]); tmpClause.push_back(auxVarsR[i]);
             addClause(tmpClause); tmpClause.clear();
 
             tmpClause.push_back(-carryVar[i]); tmpClause.push_back(auxVarsL[i]); tmpClause.push_back(carryVar[i-1]);
