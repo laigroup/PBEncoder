@@ -110,8 +110,6 @@ Pbf::Pbf(const string& filePath, PBWeightFormat weightFormat) {
         lineIndex++;
         std::istringstream inputStringStream(line);
 
-        if (verbosityLevel >= 4) util::printComment("Line " + to_string(lineIndex) + "\t" + line);
-
         vector<string> words;
         std::copy(std::istream_iterator<string>(inputStringStream), std::istream_iterator<string>(), std::back_inserter(words));
 
@@ -192,17 +190,6 @@ Pbf::Pbf(const string& filePath, PBWeightFormat weightFormat) {
     if (filePath == STDIN_CONVENTION) {
         util::printComment("Getting cnf from stdin: done");
         util::printThickLine();
-    }
-
-    if (verbosityLevel >= 1) {
-        util::printRow("declaredVarCount", declaredVarCount);
-        util::printRow("apparentVarCount", apparentVars.size());
-        util::printRow("declaredClauseCount", declaredConstraintCount);
-        util::printRow("apparentClauseCount", processedConstraintCount);
-    }
-
-    if (verbosityLevel >= 3) {
-        printConstraints();
     }
 }
 

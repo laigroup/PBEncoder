@@ -16,6 +16,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
+#include <queue>
 
 /* uses ***********************************************************************/
 
@@ -42,8 +43,8 @@ using Pair = std::pair<T1, T2>;
 /* global variables ***********************************************************/
 
 extern Int randomSeed;  // for reproducibility
-extern Int verbosityLevel;
 extern TimePoint startTime;
+extern const bool DEBUG;
 
 /* constants ******************************************************************/
 
@@ -69,47 +70,16 @@ extern const string& HELP_OPTION;
 extern const string& INPUT_OPTION;
 extern const string& OUTPUT_OPTION;
 extern const string& WEIGHT_FORMAT_OPTION;
-
-enum class WeightFormat { UNWEIGHTED,
-                          MINIC2D,
-                          CACHET,
-                          MCC };
-extern const std::map<Int, WeightFormat> WEIGHT_FORMAT_CHOICES;
-extern const Int DEFAULT_WEIGHT_FORMAT_CHOICE;
+extern const string& ENCODER_OPTION;
 
 enum class PBWeightFormat { UNWEIGHTED,
                             WEIGHTED };
 extern const std::map<Int, PBWeightFormat> PBWEIGHT_FORMAT_CHOICES;
 extern const Int DEFAULT_PBWEIGHT_FORMAT_CHOICE;
 
-extern const Float DEFAULT_JT_WAIT_SECONDS;
-
-enum class OutputFormat { JOIN_TREE,
-                          MODEL_COUNT };
-extern const std::map<Int, OutputFormat> OUTPUT_FORMAT_CHOICES;
-extern const Int DEFAULT_OUTPUT_FORMAT_CHOICE;
-
-enum class ClusteringHeuristic { MONOLITHIC,
-                                 LINEAR,
-                                 BUCKET_LIST,
-                                 BUCKET_TREE,
-                                 BOUQUET_LIST,
-                                 BOUQUET_TREE };
-extern const std::map<Int, ClusteringHeuristic> CLUSTERING_HEURISTIC_CHOICES;
-extern const Int DEFAULT_CLUSTERING_HEURISTIC_CHOICE;
-
-enum class VarOrderingHeuristic {
-    DUMMY_VAR_ORDERING_HEURISTIC,  // would trigger error in Cnf::getVarOrdering
-    APPEARANCE,
-    DECLARATION,
-    RANDOM,
-    MCS,
-    LEXP,
-    LEXM
-};
-extern const std::map<Int, VarOrderingHeuristic> VAR_ORDERING_HEURISTIC_CHOICES;
-extern const Int DEFAULT_CNF_VAR_ORDERING_HEURISTIC_CHOICE;
-extern const Int DEFAULT_DD_VAR_ORDERING_HEURISTIC_CHOICE;
+enum class EncoderType {Warners, GenArc};
+extern const std::map<Int, EncoderType> ENCODER_CHOICES;
+extern const Int DEFAULT_ENCODER_CHOICE;
 
 extern const Int DEFAULT_RANDOM_SEED;
 
@@ -123,8 +93,6 @@ extern const Int DUMMY_MAX_INT;
 
 extern const string& DUMMY_STR;
 
-extern const string& DOT_DIR;
-
 /* namespaces *****************************************************************/
 
 namespace util {
@@ -134,7 +102,6 @@ bool isInt(Float d);
 
 void printComment(const string& message, Int preceedingNewLines = 0, Int followingNewLines = 1, bool commented = true);
 void printSolutionLine(Float modelCount, Int preceedingThinLines = 1, Int followingThinLines = 1);
-void printCnfSolutionLine(WeightFormat weightFormat, Float modelCount, Int preceedingThinLines = 1, Int followingThinLines = 1);
 
 void printBoldLine(bool commented);
 void printThickLine(bool commented = true);
@@ -155,12 +122,6 @@ void printVerbosityLevelOption();
 /* functions: argument parsing **********************************************/
 
 vector<string> getArgV(int argc, char* argv[]);
-
-string getWeightFormatName(WeightFormat weightFormat);
-string getOutputFormatName(OutputFormat outputFormat);
-string getClusteringHeuristicName(ClusteringHeuristic clusteringHeuristic);
-string getVarOrderingHeuristicName(VarOrderingHeuristic varOrderingHeuristic);
-string getVerbosityLevelName(Int verbosityLevel);
 
 /* functions: CNF ***********************************************************/
 

@@ -31,7 +31,6 @@ protected:
     void addConstraint(const vector<Int> &variables, const vector<Int> &coefficent, const Int &limit); // writes: variables, apparentVars
 
 public:
-    vector<Int> getVarOrdering(VarOrderingHeuristic varOrderingHeuristic, bool inverse) const;
     Int getDeclaredVarCount() const;
     Int getApparentVarCount() const;
     PBWeightFormat getWeightFormat() const;

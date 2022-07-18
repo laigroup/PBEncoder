@@ -5,9 +5,9 @@
 /* global variables ***********************************************************/
 
 Int randomSeed = DEFAULT_RANDOM_SEED;
-Int verbosityLevel = DEFAULT_VERBOSITY_LEVEL_CHOICE;
 TimePoint startTime;
 
+const bool DEBUG = true;
 /* constants ******************************************************************/
 
 // const string &COMMENT_WORD = "c";    // cnf comment word
@@ -33,50 +33,19 @@ const string& HELP_OPTION = "h, help";
 const string& INPUT_OPTION = "I";
 const string& OUTPUT_OPTION = "O";
 const string& WEIGHT_FORMAT_OPTION = "wf";
-
-const std::map<Int, WeightFormat> WEIGHT_FORMAT_CHOICES = {
-    {1, WeightFormat::UNWEIGHTED},
-    {2, WeightFormat::MINIC2D},
-    {3, WeightFormat::CACHET},  // buggy '-1' weight
-    {4, WeightFormat::MCC}      // weight line's trailing '0' is optional
-};
-const Int DEFAULT_WEIGHT_FORMAT_CHOICE = 4;
+const string& ENCODER_OPTION = "ed";
 
 const std::map<Int, PBWeightFormat> PBWEIGHT_FORMAT_CHOICES = {
     {1, PBWeightFormat::UNWEIGHTED},
     {2, PBWeightFormat::WEIGHTED}};
 const Int DEFAULT_PBWEIGHT_FORMAT_CHOICE = 1;
 
-const Float DEFAULT_JT_WAIT_SECONDS = 10.0;
-
-const std::map<Int, OutputFormat> OUTPUT_FORMAT_CHOICES = {
-    {1, OutputFormat::JOIN_TREE},
-    {2, OutputFormat::MODEL_COUNT}};
-const Int DEFAULT_OUTPUT_FORMAT_CHOICE = 2;
-
-const std::map<Int, ClusteringHeuristic> CLUSTERING_HEURISTIC_CHOICES = {
-    {1, ClusteringHeuristic::MONOLITHIC},
-    {2, ClusteringHeuristic::LINEAR},
-    {3, ClusteringHeuristic::BUCKET_LIST},
-    {4, ClusteringHeuristic::BUCKET_TREE},
-    {5, ClusteringHeuristic::BOUQUET_LIST},
-    {6, ClusteringHeuristic::BOUQUET_TREE}};
-const Int DEFAULT_CLUSTERING_HEURISTIC_CHOICE = 6;
-
-const std::map<Int, VarOrderingHeuristic> VAR_ORDERING_HEURISTIC_CHOICES = {
-    {1, VarOrderingHeuristic::APPEARANCE},
-    {2, VarOrderingHeuristic::DECLARATION},
-    {3, VarOrderingHeuristic::RANDOM},
-    {4, VarOrderingHeuristic::MCS},
-    {5, VarOrderingHeuristic::LEXP},
-    {6, VarOrderingHeuristic::LEXM}};
-const Int DEFAULT_CNF_VAR_ORDERING_HEURISTIC_CHOICE = 5;
-const Int DEFAULT_DD_VAR_ORDERING_HEURISTIC_CHOICE = 4;
+const std::map<Int, EncoderType> ENCODER_CHOICES = {
+    {1, EncoderType::Warners},
+    {2, EncoderType::GenArc}};
+const Int DEFAULT_ENCODER_CHOICE = 1;
 
 const Int DEFAULT_RANDOM_SEED = 10;
-
-const vector<Int> VERBOSITY_LEVEL_CHOICES = {0, 1, 2, 3, 4};
-const Int DEFAULT_VERBOSITY_LEVEL_CHOICE = 0;  // sgh !!!
 
 const Float NEGATIVE_INFINITY = -std::numeric_limits<Float>::infinity();
 
@@ -84,8 +53,6 @@ const Int DUMMY_MIN_INT = std::numeric_limits<Int>::min();
 const Int DUMMY_MAX_INT = std::numeric_limits<Int>::max();
 
 const string& DUMMY_STR = "";
-
-const string& DOT_DIR = "./dot/";
 
 /* namespaces *****************************************************************/
 
@@ -116,14 +83,6 @@ void util::printSolutionLine(Float modelCount, Int preceedingThinLines, Int foll
         printThinLine();
 }
 
-void util::printCnfSolutionLine(WeightFormat weightFormat, Float modelCount, Int preceedingThinLines, Int followingThinLines) {
-    for (Int i = 0; i < preceedingThinLines; i++)
-        printThinLine();
-    cout << "s " << (weightFormat == WeightFormat::UNWEIGHTED ? "mc" : "wmc") << " " << modelCount << "\n";
-    for (Int i = 0; i < followingThinLines; i++)
-        printThinLine();
-}
-
 void util::printBoldLine(bool commented) {
     printComment("******************************************************************", 0, 1, commented);
 }
@@ -147,120 +106,6 @@ vector<string> util::getArgV(int argc, char* argv[]) {
     for (Int i = 0; i < argc; i++)
         argV.push_back(string(argv[i]));
     return argV;
-}
-
-string util::getWeightFormatName(WeightFormat weightFormat) {
-    switch (weightFormat) {
-        case WeightFormat::UNWEIGHTED: {
-            return "UNWEIGHTED";
-        }
-        case WeightFormat::MINIC2D: {
-            return "MINIC2D";
-        }
-        case WeightFormat::CACHET: {
-            return "CACHET";
-        }
-        case WeightFormat::MCC: {
-            return "MCC";
-        }
-        default: {
-            showError("no such weightFormat");
-            return DUMMY_STR;
-        }
-    }
-}
-
-string util::getOutputFormatName(OutputFormat outputFormat) {
-    switch (outputFormat) {
-        case OutputFormat::JOIN_TREE: {
-            return "JOIN_TREE";
-        }
-        case OutputFormat::MODEL_COUNT: {
-            return "MODEL_COUNT";
-        }
-        default: {
-            showError("no such outputFormat");
-            return DUMMY_STR;
-        }
-    }
-}
-
-string util::getClusteringHeuristicName(ClusteringHeuristic clusteringHeuristic) {
-    switch (clusteringHeuristic) {
-        case ClusteringHeuristic::MONOLITHIC: {
-            return "MONOLITHIC";
-        }
-        case ClusteringHeuristic::LINEAR: {
-            return "LINEAR";
-        }
-        case ClusteringHeuristic::BUCKET_LIST: {
-            return "BUCKET_LIST";
-        }
-        case ClusteringHeuristic::BUCKET_TREE: {
-            return "BUCKET_TREE";
-        }
-        case ClusteringHeuristic::BOUQUET_LIST: {
-            return "BOUQUET_LIST";
-        }
-        case ClusteringHeuristic::BOUQUET_TREE: {
-            return "BOUQUET_TREE";
-        }
-        default: {
-            showError("no such clusteringHeuristic");
-            return DUMMY_STR;
-        }
-    }
-}
-
-string util::getVarOrderingHeuristicName(VarOrderingHeuristic varOrderingHeuristic) {
-    switch (varOrderingHeuristic) {
-        case VarOrderingHeuristic::APPEARANCE: {
-            return "APPEARANCE";
-        }
-        case VarOrderingHeuristic::DECLARATION: {
-            return "DECLARATION";
-        }
-        case VarOrderingHeuristic::RANDOM: {
-            return "RANDOM";
-        }
-        case VarOrderingHeuristic::LEXP: {
-            return "LEXP";
-        }
-        case VarOrderingHeuristic::LEXM: {
-            return "LEXM";
-        }
-        case VarOrderingHeuristic::MCS: {
-            return "MCS";
-        }
-        default: {
-            showError("DUMMY_VAR_ORDERING_HEURISTIC in util::getVarOrderingHeuristicName");
-            return DUMMY_STR;
-        }
-    }
-}
-
-string util::getVerbosityLevelName(Int verbosityLevel) {
-    switch (verbosityLevel) {
-        case 0: {
-            return "solution only";
-        }
-        case 1: {
-            return "parsed info as well";
-        }
-        case 2: {
-            return "clusters as well";
-        }
-        case 3: {
-            return "cnf literal weights as well";
-        }
-        case 4: {
-            return "input lines as well";
-        }
-        default: {
-            showError("no such verbosityLevel");
-            return DUMMY_STR;
-        }
-    }
 }
 
 /* functions: CNF *************************************************************/
