@@ -71,11 +71,16 @@ extern const string& INPUT_OPTION;
 extern const string& OUTPUT_OPTION;
 extern const string& WEIGHT_FORMAT_OPTION;
 extern const string& ENCODER_OPTION;
+extern const string& OUTPUT_FORMAT_OPTION;
 
 enum class PBWeightFormat { UNWEIGHTED,
                             WEIGHTED };
 extern const std::map<Int, PBWeightFormat> PBWEIGHT_FORMAT_CHOICES;
 extern const Int DEFAULT_PBWEIGHT_FORMAT_CHOICE;
+
+enum class OutputFormat {MC20, MC21};
+extern const std::map<Int, OutputFormat> OUTPUT_FORMAT_CHOICES;
+extern const Int DEFAULT_OUTPUT_FORMAT_CHOICE;
 
 enum class EncoderType {Warners, GenArc};
 extern const std::map<Int, EncoderType> ENCODER_CHOICES;

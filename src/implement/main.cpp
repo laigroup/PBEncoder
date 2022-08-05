@@ -10,6 +10,7 @@ void OptionDict::printOptions() const {
 	cout << "\t  -" << INPUT_OPTION << "  arg  \t\targ: input file path \t\tRequired\n";
 	cout << "\t  -" << OUTPUT_OPTION << "  arg  \t\targ: output file path \t\tRequired\n";
     cout << "\t --" << WEIGHT_FORMAT_OPTION << " arg \t\targ: weight format option [default: 1, and 1-UNWEIGHTED 2-WEIGHTED]\n";
+    cout << "\t --" << OUTPUT_FORMAT_OPTION << " arg \t\targ: output format option [default: 1, and 1-MC20 2-MC21]\n";
     cout << "\t --" << ENCODER_OPTION << " arg \t\targ: encoder option [default: 1, and 1-Warners 2-GenArc]\n";
 }
 
@@ -38,6 +39,7 @@ OptionDict::OptionDict(int argc, char *argv[]) {
     options->add_options(OPTIONAL_OPTION_GROUP)
         (HELP_OPTION, "help")
         (WEIGHT_FORMAT_OPTION, "", cxxopts::value<string>()->default_value(to_string(DEFAULT_PBWEIGHT_FORMAT_CHOICE)))
+        (OUTPUT_FORMAT_OPTION, "", cxxopts::value<string>()->default_value(to_string(DEFAULT_OUTPUT_FORMAT_CHOICE)))
         (ENCODER_OPTION, "",  cxxopts::value<string>()->default_value(to_string(DEFAULT_PBWEIGHT_FORMAT_CHOICE)));
         ;
 
@@ -50,6 +52,7 @@ OptionDict::OptionDict(int argc, char *argv[]) {
     input_file = result[INPUT_OPTION].as<string>();
     output_file = result[OUTPUT_OPTION].as<string>();
     weightFormat = PBWEIGHT_FORMAT_CHOICES.at(stoll(result[WEIGHT_FORMAT_OPTION].as<string>()));
+    outputFormat = OUTPUT_FORMAT_CHOICES.at(stoll(result[OUTPUT_FORMAT_OPTION].as<string>()));
     encoderType = ENCODER_CHOICES.at(stoll(result[ENCODER_OPTION].as<string>()));
 }
 
@@ -67,11 +70,11 @@ int main(int argc, char **argv){
         if(optionDict.encoderType == EncoderType::Warners) {
             WarnersEncoder encoder;
             encoder.encodePbf(pbf);
-            encoder.printCnf(optionDict.output_file);
+            encoder.printCnf(optionDict.output_file, optionDict.outputFormat);
         } else if(optionDict.encoderType == EncoderType::GenArc) {
             GenArcEncoder encoder;
             encoder.encodePbf(pbf);
-            encoder.printCnf(optionDict.output_file);
+            encoder.printCnf(optionDict.output_file, optionDict.outputFormat);
         } 
     }
 

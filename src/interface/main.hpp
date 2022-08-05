@@ -9,6 +9,7 @@ public:
     string input_file;
     string output_file;
     PBWeightFormat weightFormat;
+    OutputFormat outputFormat;
     EncoderType encoderType;
 
     cxxopts::Options *options;

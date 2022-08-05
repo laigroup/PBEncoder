@@ -10,10 +10,13 @@ protected:
     void addClause(vector<Int> &clause);
     virtual void encodeConstraint(const vector<Int>& variable, const vector<Int> &coefficient, const Int &limit) = 0;
     Int getNewAuxVar();
-    void printWeightClause(std::ofstream &outfile) const;
+    void printWeightClauseMC20(std::ofstream &outfile) const;
+    void printWeightClauseMC21(std::ofstream &outfile) const;
+    void printCnfMC20(const string &filepath) const;
+    void printCnfMC21(const string &filepath) const;
 
 public:
-    void printCnf(const string &filepath) const;
+    void printCnf(const string &filepath, OutputFormat outputFormat) const;
     void encodePbf(const Pbf &pbf);
     Encoder(){};
 };

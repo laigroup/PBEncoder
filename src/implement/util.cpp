@@ -34,11 +34,17 @@ const string& INPUT_OPTION = "I";
 const string& OUTPUT_OPTION = "O";
 const string& WEIGHT_FORMAT_OPTION = "wf";
 const string& ENCODER_OPTION = "ed";
+const string& OUTPUT_FORMAT_OPTION = "of";
 
 const std::map<Int, PBWeightFormat> PBWEIGHT_FORMAT_CHOICES = {
     {1, PBWeightFormat::UNWEIGHTED},
     {2, PBWeightFormat::WEIGHTED}};
 const Int DEFAULT_PBWEIGHT_FORMAT_CHOICE = 1;
+
+const std::map<Int, OutputFormat> OUTPUT_FORMAT_CHOICES = {
+    {1, OutputFormat::MC20},
+    {2, OutputFormat::MC21}};
+const Int DEFAULT_OUTPUT_FORMAT_CHOICE = 1;
 
 const std::map<Int, EncoderType> ENCODER_CHOICES = {
     {1, EncoderType::Warners},

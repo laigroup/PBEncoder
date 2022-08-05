@@ -10,7 +10,7 @@ Int Encoder::getNewAuxVar() {
     return ++varCnt;
 }
 
-void Encoder::printWeightClause(std::ofstream &outfile) const {
+void Encoder::printWeightClauseMC20(std::ofstream &outfile) const {
     for(Int x = 1; x <= varCnt; x++) {
         Float weight;
         weight = literalWeights.find(x)!=literalWeights.end() ? literalWeights.at(x) : 1;
@@ -21,7 +21,18 @@ void Encoder::printWeightClause(std::ofstream &outfile) const {
     }
 }
 
-void Encoder::printCnf(const string &filePath) const {
+void Encoder::printWeightClauseMC21(std::ofstream &outfile) const {
+    for(Int x = 1; x <= varCnt; x++) {
+        Float weight;
+        weight = literalWeights.find(x)!=literalWeights.end() ? literalWeights.at(x) : 1;
+        outfile << "c p weight "  << x << " " << weight << " 0" << std::endl;
+
+        weight = literalWeights.find(-x)!=literalWeights.end() ? literalWeights.at(-x) : 1;
+        outfile << "c p weight " << -x << " " << weight << " 0" << std::endl;
+    }
+}
+
+void Encoder::printCnfMC20(const string &filePath) const {
     std::ofstream outfile(filePath);
     if(!outfile.is_open()) {
         util::showError(filePath + " can not open");
@@ -39,14 +50,49 @@ void Encoder::printCnf(const string &filePath) const {
         for(Int literal : clauses[i]) {
             outfile << literal << " ";
         }
-        outfile << "0\n";
+        outfile << "0" << std::endl;
     }
 
     if(weightFormat == PBWeightFormat::WEIGHTED) {
-        printWeightClause(outfile);
+        printWeightClauseMC20(outfile);
     }
 
     outfile.close();
+}
+
+void Encoder::printCnfMC21(const string &filePath) const {
+        std::ofstream outfile(filePath);
+    if(!outfile.is_open()) {
+        util::showError(filePath + " can not open");
+    }
+
+    string problemType = "cnf";
+
+    // switch (weightFormat) {
+    //     case PBWeightFormat::UNWEIGHTED : problemType = "cnf"; break;
+    //     case PBWeightFormat::WEIGHTED   : problemType = "wcnf"; break; 
+    // }
+    outfile << "p " << problemType << " " << varCnt << " " << clauseCnt << "\n";
+
+    for(Int i = 0; i < clauseCnt; i++) {
+        for(Int literal : clauses[i]) {
+            outfile << literal << " ";
+        }
+        outfile << "0" << std::endl;
+    }
+
+    if(weightFormat == PBWeightFormat::WEIGHTED) {
+        printWeightClauseMC21(outfile);
+    }
+
+    outfile.close();
+}
+
+void Encoder::printCnf(const string &filepath, OutputFormat outputFormat) const {
+    switch(outputFormat){
+        case OutputFormat::MC20: printCnfMC20(filepath); break;
+        case OutputFormat::MC21: printCnfMC21(filepath); break;
+    }
 }
 
 void Encoder::encodePbf(const Pbf &pbf) {
